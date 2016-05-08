@@ -18,6 +18,8 @@ namespace lazarus
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Player player;
+        KeyboardState keyboard;
 
         public Game1()
         {
@@ -47,7 +49,7 @@ namespace lazarus
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            player = new Player(Content, spriteBatch, 200);
         }
 
         /// <summary>
@@ -70,7 +72,23 @@ namespace lazarus
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            // TODO: Add your update logic here
+            keyboard = Keyboard.GetState();
+            bool isWalking = false;
+
+            if (keyboard.IsKeyDown(Keys.Left))
+            {
+                isWalking = true;
+                player.Update(gameTime, WalkingState.LeftWalking);
+            }
+
+            if (keyboard.IsKeyDown(Keys.Right))
+            {
+                isWalking = true;
+                player.Update(gameTime, WalkingState.RightWalking);
+            }
+
+            if (!isWalking)
+                player.Direction = WalkingState.NotWalking;
 
             base.Update(gameTime);
         }
@@ -83,7 +101,10 @@ namespace lazarus
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            spriteBatch.Begin();
+            player.drawCharacterOnScreen();
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
